@@ -1,0 +1,32 @@
+# WARNING:
+# WARNING: This file is managed by Puppet. Do not edit manually.
+# WARNING:
+
+# Passenger config with REE and RVM gemset.
+LoadModule passenger_module /usr/local/rvm/gems/<%= ruby_version -%>/gems/passenger-<%= passenger_version -%>/ext/apache2/mod_passenger.so
+PassengerRoot /usr/local/rvm/gems/<%= ruby_version -%>/gems/passenger-<%= passenger_version %>
+PassengerRuby /usr/local/rvm/wrappers/<%= ruby_version -%>/ruby
+
+
+# See: http://www.alfajango.com/blog/performance-tuning-for-phusion-passenger-an-introduction/
+
+# PassengerMaxPoolSize
+# Default: 6
+# For 2gb RAM:          30
+# For 512mb RAM:        6 (default)
+# For 1gb RAM:          15
+# For 256 with MySQL:   2
+PassengerMaxPoolSize    <%= max_pool_size %>
+
+# PassengerPoolIdleTime
+# Recommended to be avg time per page * 2
+# In Google Analytics... (Avg time on site / Avg page views) * 2
+# Default: 300
+PassengerPoolIdleTime   <%= pool_idle_time %>
+
+# PassengerMaxInstancesPerApp < PassengerMaxPoolSize 
+# if you have multiple applications running.
+#PassengerMaxInstancesPerApp 1
+
+# Must be used with RailsBaseURI in Vhost
+#RailsAutoDetect off

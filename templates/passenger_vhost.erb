@@ -1,0 +1,40 @@
+# WARNING:
+# WARNING: This file is managed by Puppet. Do not edit by and.
+# WARNING:
+
+<VirtualHost *:<%= port %>>
+  ServerAdmin <%= server_admin %>
+
+  ServerName <%= server_name %>
+<% if server_aliases.is_a? Array -%>
+<% server_aliases.each do |name| -%>
+  <%= "ServerAlias #{name}" %>
+<% end -%>
+<% elsif server_aliases != '' -%>
+  <%= "ServerAlias #{server_aliases}" %>
+<% end -%>
+
+  DocumentRoot <%= app_root -%>/public
+
+  ErrorLog <%= app_root -%>/log/<%= name -%>-apache-error.log
+  CustomLog <%= app_root -%>/log/<%= name -%>-apache-access.log combined
+
+  # Show maintenance page if it exists
+  ErrorDocument 503 /system/maintenance.html
+  RewriteEngine On
+  RewriteCond %{REQUEST_URI} !\.(css|gif|jpg|png)$
+  RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+  RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+  RewriteRule ^.*$  -  [redirect=503,last]
+
+  <Directory <%= app_root -%>/public>
+    Allow from all
+    Options -MultiViews
+  </Directory>
+
+#TODO: This seems to break things, but is more efficient if we can get it to wor if we can get it to work.
+#  RailsBaseURI /
+
+  RackEnv <%= rails_env %>
+  RailsEnv <%= rails_env %>
+</VirtualHost>
